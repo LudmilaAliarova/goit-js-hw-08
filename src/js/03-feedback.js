@@ -1,8 +1,11 @@
 import throttle from 'lodash.throttle';
-localStorage.clear();
+
 const form = document.querySelector('.feedback-form');
 // отслеживаем INPUT и обновляем хранилище не чаще чем раз в 500 мс
 form.addEventListener('input', throttle(inputData, 500));
+form.addEventListener('submit', submitForm);
+
+dataLocalStorage();
 
 const formData = {};
 // при вводе данных записываем их в объект FormData
@@ -13,14 +16,12 @@ function inputData(evt) {
   console.log(formData);
 }
 // очищение полей формы и хранилища, вывод в консоль
-form.addEventListener('submit', submitForm);
+
 function submitForm(evt) {
   evt.preventDefault();
-  console.log(localStorage);
-  //evt.currentTarget.submit();
+  console.log(JSON.parse(localStorage.getItem('feedback-form-state')));
   evt.currentTarget.reset();
   localStorage.removeItem('feedback-form-state');
-  localStorage.clear();
 }
 
 function dataLocalStorage() {
@@ -28,12 +29,11 @@ function dataLocalStorage() {
   //проверка формы
   const email = document.querySelector('.feedback-form input');
   const message = document.querySelector('.feedback-form textarea');
-
-  if (!email.value || !message.value) {
-    console.log('The form is empty!');
-  } else {
+  // заполнение полей при перезагрузке страницы
+  if (data.email) {
     email.value = data.email;
+  }
+  if (data.message) {
     message.value = data.message;
   }
 }
-dataLocalStorage();
